@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.1-uds.1](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.0...v0.0.1-uds.1) (2024-03-13)
+
+
+### Features
+
+* add version.txt ([43f730e](https://github.com/MxNxPx/release-daily/commit/43f730e194917ce102c0755be35eb15bf39448ab))
+
 ## [0.0.1-uds.0](https://github.com/MxNxPx/release-daily/compare/v0.0.1...v0.0.1-uds.0) (2024-03-13)
 
 
