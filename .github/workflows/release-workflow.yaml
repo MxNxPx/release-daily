@@ -21,10 +21,6 @@ jobs:
       - id: release-tag
         run: echo "release_tag=${{ steps.tag.outputs.version || false }}" >> $GITHUB_OUTPUT 
 
-  post-tag-outputs:
-    needs: tag-new-version
-    runs-on: ubuntu-latest
-    steps:
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -67,10 +63,6 @@ jobs:
         id: echo-release
         run: echo "RELEASE ARTIFACT WILL BE CREATED AT THIS POINT"
 
-  post-publish-outputs:
-    needs: publish-release
-    runs-on: ubuntu-latest
-    steps:
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
