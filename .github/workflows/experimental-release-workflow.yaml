@@ -1,7 +1,7 @@
 on:
   schedule:
-    # Runs at 9 PM UTC, which is 5 PM EST
-    - cron:  '04 21 * * *'
+    # Runs at 5 PM UTC, which is 1 PM EDT
+    - cron: "0 17 * * *"
   workflow_dispatch:
 
 name: experimental-release-please-workflow
