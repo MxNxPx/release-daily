@@ -1,6 +1,6 @@
 on:
   schedule:
-    # Runs at 10 PM UTC, which is 5 PM EST
+    # Runs at 9 PM UTC, which is 5 PM EST
     - cron:  '04 21 * * *'
   workflow_dispatch:
 
