@@ -60,7 +60,7 @@ jobs:
           echo "GitHub SHA: $GITHUB_SHA"
 
   publish-experimental-release:
-    needs: tag-new-version
+    needs: new-experimental-version
     runs-on: ubuntu-latest
     steps:
       - name: Publish Release Artifact
