@@ -60,6 +60,9 @@ jobs:
 ## DEBUG BLOCK END ##
 
   publish-experimental-release:
+    strategy:
+      matrix:
+        flavor: [upstream, registry1]
     needs: new-experimental-version
     runs-on: ubuntu-latest
     permissions:
