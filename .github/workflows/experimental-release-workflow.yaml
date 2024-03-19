@@ -11,21 +11,20 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     outputs:
-      release_created: ${{ steps.release-flag.outputs.release_created }}
       release_tag: ${{ steps.release-tag.outputs.release_tag }}
     steps:
       - name: Create Release Tag
         id: tag
-        uses: google-github-actions/release-please-action@v4.1.0
+        uses: google-github-actions/release-please-action@cc61a07e2da466bebbc19b3a7dd01d6aecb20d1e # v4
         with:
           config-file: experimental/release-please-config.json
           manifest-file: experimental/.release-please-manifest.json
           skip-github-pull-request: true
           skip-github-release: true
-
       - id: release-tag
         run: echo "release_tag=experimental" >> $GITHUB_OUTPUT 
 
+## DEBUG BLOCK START ##
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -58,15 +57,55 @@ jobs:
           echo "The run id is: $GITHUB_RUN_ID"
           echo "The GitHub Actor's username is: $GITHUB_ACTOR"
           echo "GitHub SHA: $GITHUB_SHA"
+## DEBUG BLOCK END ##
 
   publish-experimental-release:
     needs: new-experimental-version
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Publish Release Artifact
         id: echo-release
         run: echo "RELEASE ARTIFACT WILL BE CREATED AT THIS POINT"
+      - name: Environment setup
+        uses: ./.github/actions/setup
+      - name: Login to GHCR
+        run: uds run registry-login --set REGISTRY=ghcr.io --set REGISTRY_USERNAME=dummy --set REGISTRY_PASSWORD=${{ secrets.GITHUB_TOKEN }} --set REGISTRY_RETRY_INTERVAL=90
+      - name: Login to registry1
+        run: uds run registry-login --set REGISTRY=registry1.dso.mil --set REGISTRY_USERNAME=${{ secrets.IRON_BANK_ROBOT_USERNAME }} --set REGISTRY_PASSWORD=${{ secrets.IRON_BANK_ROBOT_PASSWORD }} --set REGISTRY_RETRY_INTERVAL=90
+      - name: Set versions to experimental
+        run: |
+          yq -ei '.metadata.version="experimental", (.packages[]|select(has("ref"))|select(.name=="core")).ref="experimental"' bundles/k3d-standard/uds-bundle.yaml
+          yq -ei '.metadata.version="experimental", (.packages[]|select(has("ref"))|select(.name=="core-istio")).ref="experimental"' bundles/k3d-istio/uds-bundle.yaml
+          yq -ei '.metadata.version="experimental"' packages/istio/zarf.yaml
+          yq -ei '.metadata.version="experimental"' packages/standard/zarf.yaml
+      - name: Create Packages and Bundles
+        run: |
+          ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml standard-package --no-progress --set FLAVOR=${{ matrix.flavor }}
+          ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml k3d-standard-bundle --no-progress
+          ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml istio-package --no-progress --set FLAVOR=${{ matrix.flavor }}
+          ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml k3d-istio-bundle --no-progress
 
+          if [ "${{ matrix.flavor }}" != "registry1" ]; then
+            ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml standard-package --no-progress --set FLAVOR=${{ matrix.flavor }}
+            ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml k3d-standard-bundle --no-progress
+            ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml istio-package --no-progress --set FLAVOR=${{ matrix.flavor }}
+            ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml k3d-istio-bundle --no-progress
+          fi
+      - name: Publish Standard Package
+        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set VERSION=experimental
+      - name: Publish Upstream Flavored Bundles
+        if: ${{ matrix.flavor != 'registry1'}}
+        run: uds run -f tasks/publish.yaml bundles --set VERSION=experimental
+      - name: Save logs
+        if: always()
+        uses: ./.github/actions/save-logs
+        with:
+          suffix: -${{ matrix.flavor }}
+
+## DEBUG BLOCK START ##
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -99,3 +138,4 @@ jobs:
           echo "The run id is: $GITHUB_RUN_ID"
           echo "The GitHub Actor's username is: $GITHUB_ACTOR"
           echo "GitHub SHA: $GITHUB_SHA"
+## DEBUG BLOCK END ##

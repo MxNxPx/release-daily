@@ -1,0 +1,16 @@
+kind: ZarfPackageConfig
+metadata:
+  name: core-istio
+  description: "UDS Core (Istio Only)"
+  authors: "Defense Unicorns - Product"
+  # x-release-please-start-version
+  version: "0.16.1"
+  # x-release-please-end
+
+components:
+  # Istio
+  - name: istio-controlplane
+    required: true
+    import:
+      path: ../../src/istio
+
