@@ -21,7 +21,7 @@ jobs:
           config-file: experimental/release-please-config.json
           manifest-file: experimental/.release-please-manifest.json
           skip-github-pull-request: true
-          skip-github-release: false
+          skip-github-release: true
       - id: release-flag
         run: echo "release_created=true" >> $GITHUB_OUTPUT 
       - id: release-tag
