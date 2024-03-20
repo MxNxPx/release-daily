@@ -7,66 +7,12 @@ on:
 name: experimental-release-please-workflow
 
 jobs:
-  new-experimental-version:
-    permissions: write-all
-    runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release-flag.outputs.release_created }}
-      release_tag: ${{ steps.release-tag.outputs.release_tag }}
-    steps:
-      - name: Create Release Tag
-        id: tag
-        uses: google-github-actions/release-please-action@cc61a07e2da466bebbc19b3a7dd01d6aecb20d1e # v4
-        with:
-          config-file: experimental/release-please-config.json
-          manifest-file: experimental/.release-please-manifest.json
-          skip-github-pull-request: true
-          skip-github-release: true
-      - id: release-flag
-        run: echo "release_created=true" >> $GITHUB_OUTPUT 
-      - id: release-tag
-        run: echo "release_tag=experimental" >> $GITHUB_OUTPUT 
-
-## DEBUG BLOCK START ##
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJson(job) }}
-        run: echo "$JOB_CONTEXT"
-      - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJson(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJson(matrix) }}
-        run: echo "$MATRIX_CONTEXT"
-
-      - name: Show default environment variables
-        run: |
-          echo "The job_id is: $GITHUB_JOB"   # reference the default environment variables
-          echo "The id of this action is: $GITHUB_ACTION"   # reference the default environment variables
-          echo "The run id is: $GITHUB_RUN_ID"
-          echo "The GitHub Actor's username is: $GITHUB_ACTOR"
-          echo "GitHub SHA: $GITHUB_SHA"
-## DEBUG BLOCK END ##
-
   publish-experimental-release:
+    env:
+      GH_TOKEN: ${{ github.token }}
     strategy:
       matrix:
         flavor: [upstream, registry1]
-    needs: new-experimental-version
     runs-on: ubuntu-latest
     permissions:
       contents: read
