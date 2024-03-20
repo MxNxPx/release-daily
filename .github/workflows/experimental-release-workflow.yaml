@@ -15,7 +15,7 @@ jobs:
         flavor: [upstream, registry1]
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - name: Publish Release Artifact
@@ -53,9 +53,7 @@ jobs:
         if: ${{ matrix.flavor != 'registry1'}}
         run: uds run -f tasks/publish.yaml bundles --set VERSION=experimental
       - name: Update experimental tag
-        run: |
-          gh auth login --with-token <<< "$GH_TOKEN"
-          gh release create experimental -t "experimental" -n "" --prerelease
+        run: gh release create experimental -t "experimental" -n "" --prerelease
       - name: Save logs
         if: always()
         uses: ./.github/actions/save-logs
