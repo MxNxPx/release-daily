@@ -27,7 +27,6 @@ jobs:
         run: uds run registry-login --set REGISTRY=registry1.dso.mil --set REGISTRY_USERNAME=${{ secrets.IRON_BANK_ROBOT_USERNAME }} --set REGISTRY_PASSWORD=${{ secrets.IRON_BANK_ROBOT_PASSWORD }} --set REGISTRY_RETRY_INTERVAL=90
       - name: Set versions to snapshot
         run: |
-          export SHORT_SHA="${SHA:0:7}"
           yq -ei '.metadata.version=env(SHORT_SHA), (.packages[]|select(has("ref"))|select(.name=="core")).ref=env(SHORT_SHA)' bundles/k3d-standard/uds-bundle.yaml
           yq -ei '.metadata.version=env(SHORT_SHA), (.packages[]|select(has("ref"))|select(.name=="core-istio")).ref=env(SHORT_SHA)' bundles/k3d-istio/uds-bundle.yaml
           yq -ei '.metadata.version=env(SHORT_SHA)' packages/istio/zarf.yaml
