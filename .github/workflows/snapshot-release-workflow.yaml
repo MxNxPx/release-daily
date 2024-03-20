@@ -1,13 +1,13 @@
 on:
   schedule:
-    # Runs at 5 PM UTC, which is 1 PM EDT
-    - cron: "0 17 * * *"
+    # Runs daily at 10:00 UTC
+    - cron: "0 10 * * *"
   workflow_dispatch:
 
-name: experimental-release-workflow
+name: snapshot-release-workflow
 
 jobs:
-  publish-experimental-release:
+  publish-snapshot-release:
     strategy:
       matrix:
         flavor: [upstream, registry1]
@@ -23,12 +23,13 @@ jobs:
         run: uds run registry-login --set REGISTRY=ghcr.io --set REGISTRY_USERNAME=dummy --set REGISTRY_PASSWORD=${{ secrets.GITHUB_TOKEN }} --set REGISTRY_RETRY_INTERVAL=90
       - name: Login to registry1
         run: uds run registry-login --set REGISTRY=registry1.dso.mil --set REGISTRY_USERNAME=${{ secrets.IRON_BANK_ROBOT_USERNAME }} --set REGISTRY_PASSWORD=${{ secrets.IRON_BANK_ROBOT_PASSWORD }} --set REGISTRY_RETRY_INTERVAL=90
-      - name: Set versions to experimental
+      - name: Set versions to snapshot
         run: |
-          yq -ei '.metadata.version="experimental", (.packages[]|select(has("ref"))|select(.name=="core")).ref="experimental"' bundles/k3d-standard/uds-bundle.yaml
-          yq -ei '.metadata.version="experimental", (.packages[]|select(has("ref"))|select(.name=="core-istio")).ref="experimental"' bundles/k3d-istio/uds-bundle.yaml
-          yq -ei '.metadata.version="experimental"' packages/istio/zarf.yaml
-          yq -ei '.metadata.version="experimental"' packages/standard/zarf.yaml
+          export SHORT_SHA="${SHA:0:7}"
+          yq -ei '.metadata.version=env(SHORT_SHA), (.packages[]|select(has("ref"))|select(.name=="core")).ref=env(SHORT_SHA)' bundles/k3d-standard/uds-bundle.yaml
+          yq -ei '.metadata.version=env(SHORT_SHA), (.packages[]|select(has("ref"))|select(.name=="core-istio")).ref=env(SHORT_SHA)' bundles/k3d-istio/uds-bundle.yaml
+          yq -ei '.metadata.version=env(SHORT_SHA)' packages/istio/zarf.yaml
+          yq -ei '.metadata.version=env(SHORT_SHA)' packages/standard/zarf.yaml
       - name: Create Packages and Bundles
         run: |
           ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml standard-package --no-progress --set FLAVOR=${{ matrix.flavor }}
@@ -43,18 +44,18 @@ jobs:
             ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml k3d-istio-bundle --no-progress
           fi
       - name: Publish Standard Package
-        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set VERSION=experimental
+        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO="oci://ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SHORT_SHA}"
       - name: Publish Upstream Flavored Bundles
         if: ${{ matrix.flavor != 'registry1'}}
-        run: uds run -f tasks/publish.yaml bundles --set VERSION=experimental
+        run: uds run -f tasks/publish.yaml bundles --set TARGET_REPO="oci://ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SHORT_SHA}"
       - name: Save logs
         if: always()
         uses: ./.github/actions/save-logs
         with:
           suffix: -${{ matrix.flavor }}
 
-  update-experimental-tag:
-    needs: publish-experimental-release
+  update-snapshot-latest-tag:
+    needs: publish-snapshot-release
     env:
       GH_TOKEN: ${{ github.token }}
     runs-on: ubuntu-latest
@@ -62,9 +63,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Update experimental tag
+      - name: Update snapshot-latest tag
         run: |
-          if gh release view experimental; then
-            gh release delete experimental --cleanup-tag -y
+          if gh release view snapshot-latest; then
+            gh release delete snapshot-latest --cleanup-tag -y
           fi
-          gh release create experimental -t "experimental" -n "" --prerelease
+          gh release create snapshot-latest -t "snapshot-latest" -n "" --prerelease
