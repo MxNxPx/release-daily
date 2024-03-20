@@ -11,14 +11,14 @@ jobs:
     strategy:
       matrix:
         flavor: [upstream, registry1]
-    env:
-      SHORT_SHA: "${SHA:0:7}"
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Get git commit short sha
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Environment setup
         uses: ./.github/actions/setup
       - name: Login to GHCR
