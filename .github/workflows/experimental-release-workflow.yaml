@@ -8,14 +8,12 @@ name: experimental-release-please-workflow
 
 jobs:
   publish-experimental-release:
-    env:
-      GH_TOKEN: ${{ github.token }}
     strategy:
       matrix:
         flavor: [upstream, registry1]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       packages: write
     steps:
       - name: Publish Release Artifact
@@ -94,3 +92,13 @@ jobs:
           echo "The GitHub Actor's username is: $GITHUB_ACTOR"
           echo "GitHub SHA: $GITHUB_SHA"
 ## DEBUG BLOCK END ##
+
+  update-experimental-tag:
+    env:
+      GH_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Update experimental tag
+        run: gh release create experimental -t "experimental" -n "" --prerelease
