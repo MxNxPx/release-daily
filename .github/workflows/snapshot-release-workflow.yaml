@@ -11,6 +11,8 @@ jobs:
     strategy:
       matrix:
         flavor: [upstream, registry1]
+    env:
+      SHORT_SHA: "${SHA:0:7}"
     runs-on: ubuntu-latest
     permissions:
       contents: read
