@@ -101,4 +101,8 @@ jobs:
       contents: write
     steps:
       - name: Update experimental tag
-        run: gh release create experimental -t "experimental" -n "" --prerelease
+        run: |
+          if gh release view experimental; then
+            gh release delete experimental --cleanup-tag -y
+          fi
+          gh release create experimental -t "experimental" -n "" --prerelease
