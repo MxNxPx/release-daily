@@ -4,7 +4,7 @@ on:
     - cron: "0 17 * * *"
   workflow_dispatch:
 
-name: experimental-release-please-workflow
+name: experimental-release-workflow
 
 jobs:
   publish-experimental-release:
@@ -16,9 +16,6 @@ jobs:
       contents: read
       packages: write
     steps:
-      - name: Publish Release Artifact
-        id: echo-release
-        run: echo "RELEASE ARTIFACT WILL BE CREATED AT THIS POINT"
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Environment setup
         uses: ./.github/actions/setup
