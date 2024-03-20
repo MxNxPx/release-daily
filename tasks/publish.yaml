@@ -36,5 +36,5 @@ tasks:
 
       - description: "Tag the latest bundles"
         cmd: |
-          pkgPath="ghcr.io/mxnxpx/packages/uds/bundles/k3d-core-demo"
+          pkgPath=$(echo "${TARGET_REPO}/bundles/k3d-core-demo"|sed 's|^oci://||')
           uds zarf tools registry copy ${pkgPath}:${VERSION} ${pkgPath}:latest
