@@ -1,6 +1,6 @@
 variables:
   - name: TARGET_REPO
-    default: oci://ghcr.io/mxnxpx/packages/uds
+    default: ghcr.io/mxnxpx/packages/uds
 
   - name: FLAVOR
     default: upstream
@@ -23,18 +23,27 @@ tasks:
             uds zarf package publish build/zarf-package-core-arm64-${VERSION}.tar.zst ${TARGET_REPO}
           fi
 
+      - description: "Tag the latest package (if snapshot)"
+        cmd: |
+          if [ $(echo "${TARGET_REPO}" | grep 'snapshot') ]; then
+             pkgPath="${TARGET_REPO}/core"
+             uds zarf tools registry copy ${pkgPath}:${VERSION}-${FLAVOR} ${pkgPath}:latest-${FLAVOR}
+          fi
+
   - name: bundles
     description: "Publish UDS Bundles"
     actions:
       - description: "Publish amd64 and arm64 bundles"
         cmd: |
-          uds publish bundles/k3d-standard/uds-bundle-k3d-*-amd64-${VERSION}.tar.zst ${TARGET_REPO}/bundles --no-progress
-          uds publish bundles/k3d-standard/uds-bundle-k3d-*-arm64-${VERSION}.tar.zst ${TARGET_REPO}/bundles --no-progress
+          uds publish bundles/k3d-standard/uds-bundle-k3d-*-amd64-${VERSION}.tar.zst oci://${TARGET_REPO}/bundles --no-progress
+          uds publish bundles/k3d-standard/uds-bundle-k3d-*-arm64-${VERSION}.tar.zst oci://${TARGET_REPO}/bundles --no-progress
 
-          uds publish bundles/k3d-istio/uds-bundle-k3d-*-arm64-${VERSION}.tar.zst ${TARGET_REPO}/bundles --no-progress
-          uds publish bundles/k3d-istio/uds-bundle-k3d-*-amd64-${VERSION}.tar.zst ${TARGET_REPO}/bundles --no-progress
+          uds publish bundles/k3d-istio/uds-bundle-k3d-*-arm64-${VERSION}.tar.zst oci://${TARGET_REPO}/bundles --no-progress
+          uds publish bundles/k3d-istio/uds-bundle-k3d-*-amd64-${VERSION}.tar.zst oci://${TARGET_REPO}/bundles --no-progress
 
       - description: "Tag the latest bundles"
         cmd: |
-          pkgPath=$(echo "${TARGET_REPO}/bundles/k3d-core-demo"|sed 's|^oci://||')
+          pkgPath="${TARGET_REPO}/bundles/k3d-core-demo"
+          uds zarf tools registry copy ${pkgPath}:${VERSION} ${pkgPath}:latest
+          pkgPath="${TARGET_REPO}/bundles/k3d-core-istio-dev"
           uds zarf tools registry copy ${pkgPath}:${VERSION} ${pkgPath}:latest

@@ -45,10 +45,10 @@ jobs:
             ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml k3d-istio-bundle --no-progress
           fi
       - name: Publish Standard Package
-        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO="oci://ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SHORT_SHA}"
+        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SHORT_SHA}"
       - name: Publish Upstream Flavored Bundles
         if: ${{ matrix.flavor != 'registry1'}}
-        run: uds run -f tasks/publish.yaml bundles --set TARGET_REPO="oci://ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SHORT_SHA}"
+        run: uds run -f tasks/publish.yaml bundles --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SHORT_SHA}"
       - name: Save logs
         if: always()
         uses: ./.github/actions/save-logs
