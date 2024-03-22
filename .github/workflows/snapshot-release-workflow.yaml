@@ -9,7 +9,7 @@ name: snapshot-release-workflow
 jobs:
   publish-snapshot-release:
     permissions:
-      contents: read
+      contents: write
       packages: write
     uses: ./.github/workflows/publish-workflow.yaml
     with:
