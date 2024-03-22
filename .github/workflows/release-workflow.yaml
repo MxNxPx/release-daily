@@ -22,6 +22,8 @@ jobs:
         run: echo "release_tag=${{ steps.tag.outputs.version || false }}" >> $GITHUB_OUTPUT 
 
   publish-snapshot-release:
+    needs: tag-new-version
+    if: ${{ needs.tag-new-version.outputs.release_created == 'true'}}
     permissions:
       contents: write
       packages: write
