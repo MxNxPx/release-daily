@@ -4,7 +4,8 @@ on:
   workflow_call:
     inputs:
       snapshot:
-        required: false
+        required: true
+        default: "true"
         type: string
 
 jobs:
@@ -41,12 +42,12 @@ jobs:
           ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml standard-package --no-progress --set FLAVOR=${{ matrix.flavor }}
           ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml k3d-standard-bundle --no-progress
           ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml istio-package --no-progress --set FLAVOR=${{ matrix.flavor }}
-          ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml k3d-istio-bundle --no-progress
+        te-snapshot-latest-tag' is requesting 'contents: write', but is only allowed 'contents: read'.ZARF_ARCHITECTURE=amd64 uds run -f tasks/create.yaml k3d-istio-bundle --no-progress
 
-          if [ "${{ matrix.flavor }}" != "registry1" ]; then
-            ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml standard-package --no-progress --set FLAVOR=${{ matrix.flavor }}
-            ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml k3d-standard-bundle --no-progress
-            ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml istio-package --no-progress --set FLAVOR=${{ matrix.flavor }}
+        te-snapshot-latest-tag' is requesting 'contents: write', but is only allowed 'contents: read'.if [ "${{ matrix.flavor }}" != "registry1" ]; then
+        te-snapshot-latest-tag' is requesting 'contents: write', but is only allowed 'contents: read'.  ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml standard-package --no-progress --set FLAVOR=${{ matrix.flavor }}
+        te-snapshot-latest-tag' is requesting 'contents: write', but is only allowed 'contents: read'.  ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml k3d-standard-bundle --no-progress
+        te-snapshot-latest-tag' is requesting 'contents: write', but is only allowed 'contents: read'.  ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml istio-package --no-progress --set FLAVOR=${{ matrix.flavor }}
             ZARF_ARCHITECTURE=arm64 uds run -f tasks/create.yaml k3d-istio-bundle --no-progress
           fi
 

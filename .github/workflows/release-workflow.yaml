@@ -28,4 +28,6 @@ jobs:
       contents: write
       packages: write
     uses: ./.github/workflows/publish-workflow.yaml
+    with:
+      snapshot: "false"
     secrets: inherit
