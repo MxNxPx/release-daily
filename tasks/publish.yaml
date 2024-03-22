@@ -27,7 +27,8 @@ tasks:
         cmd: |
           if [ $(echo "${TARGET_REPO}" | grep 'snapshot') ]; then
              pkgPath="${TARGET_REPO}/core"
-             uds zarf tools registry copy ${pkgPath}:${VERSION}-${FLAVOR} ${pkgPath}:latest-${FLAVOR}
+             latestTag="latest-snapshot"
+             uds zarf tools registry copy ${pkgPath}:${VERSION}-${FLAVOR} ${pkgPath}:${latestTag}-${FLAVOR}
           fi
 
   - name: bundles
@@ -43,8 +44,13 @@ tasks:
 
       - description: "Tag the latest bundles"
         cmd: |
+          if [ $(echo "${TARGET_REPO}" | grep 'snapshot') ]; then
+             latestTag="latest-snapshot"
+          else
+             latestTag="latest"
+          fi
           pkgPath="${TARGET_REPO}/bundles/k3d-core-demo"
-          uds zarf tools registry copy ${pkgPath}:${VERSION} ${pkgPath}:latest
+          uds zarf tools registry copy ${pkgPath}:${VERSION} ${pkgPath}:${latestTag}
 
           pkgPath="${TARGET_REPO}/bundles/k3d-core-istio-dev"
-          uds zarf tools registry copy ${pkgPath}:${VERSION} ${pkgPath}:latest
+          uds zarf tools registry copy ${pkgPath}:${VERSION} ${pkgPath}:${latestTag}
