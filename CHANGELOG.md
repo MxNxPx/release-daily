@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.0.1-uds.2](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.1...v0.0.1-uds.2) (2024-03-22)
+
+
+### Features
+
+* add ci publishing ([7045bc5](https://github.com/MxNxPx/release-daily/commit/7045bc590da16fc6f4cd22ac48989be916afc85a))
+* some more ci thingz ([283bfc7](https://github.com/MxNxPx/release-daily/commit/283bfc728096d806f6050d67ff5997007e467c68))
+* update some ci stuff ([aa2dec6](https://github.com/MxNxPx/release-daily/commit/aa2dec682d67171d4899e290db95a82dd1335fee))
+
 ## [0.0.1-uds.1](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.0...v0.0.1-uds.1) (2024-03-13)
 
 
