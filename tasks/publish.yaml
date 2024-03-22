@@ -45,5 +45,6 @@ tasks:
         cmd: |
           pkgPath="${TARGET_REPO}/bundles/k3d-core-demo"
           uds zarf tools registry copy ${pkgPath}:${VERSION} ${pkgPath}:latest
+
           pkgPath="${TARGET_REPO}/bundles/k3d-core-istio-dev"
           uds zarf tools registry copy ${pkgPath}:${VERSION} ${pkgPath}:latest
