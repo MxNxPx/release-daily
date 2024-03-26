@@ -34,12 +34,11 @@ jobs:
           fetch-tags: 'true'
       - name: Update snapshot-latest tag
         run: |
-          # create copy of previous tag
-          git tag -f previous-snapshot-latest snapshot-latest
-          git push --force origin previous-snapshot-latest
+          # get last release tag
+          LAST_RELEASE_TAG="$(gh release list --exclude-drafts --exclude-pre-releases --json tagName --jq '.[0].tagName')"
           # cleanup old release
           if gh release view snapshot-latest; then
             gh release delete snapshot-latest --cleanup-tag -y
           fi
           # generate new release
-          gh release create snapshot-latest -t "snapshot-latest" --prerelease --notes-from-tag previous-snapshot-latest --generate-notes
+          gh release create snapshot-latest -t "snapshot-latest" --prerelease --notes-from-tag ${LAST_RELEASE_TAG} --generate-notes
