@@ -29,8 +29,8 @@ jobs:
         if: ${{ github.event.inputs.snapshot == 'true' }}
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
-          RELEASE_DATE=$(date +'%Y-%m-%d-%H-%M')
-          echo "SNAPSHOT_VERSION=${SHORT_SHA}-${RELEASE_DATE}" >> $GITHUB_ENV
+          RELEASE_DATE=$(date +'%Y-%m-%d')
+          echo "SNAPSHOT_VERSION=${RELEASE_DATE}-${SHORT_SHA}" >> $GITHUB_ENV
       - name: Set versions to snapshot
         if: ${{ github.event.inputs.snapshot == 'true' }}
         run: |
