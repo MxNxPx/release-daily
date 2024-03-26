@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.1-uds.3](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.2...v0.0.1-uds.3) (2024-03-26)
+
+
+### Features
+
+* add snap notes ([164e600](https://github.com/MxNxPx/release-daily/commit/164e600ee3f724d2a4d3e5e5ede875040cd65f74))
+
 ## [0.0.1-uds.2](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.1...v0.0.1-uds.2) (2024-03-22)
 
 
