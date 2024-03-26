@@ -41,4 +41,4 @@ jobs:
             gh release delete snapshot-latest --cleanup-tag -y
           fi
           # generate new release
-          gh release create snapshot-latest -t "snapshot-latest" --prerelease --notes-from-tag ${LAST_RELEASE_TAG} --generate-notes
+          gh release create snapshot-latest -t "snapshot-latest" --prerelease --notes-start-tag "${LAST_RELEASE_TAG}" --generate-notes
