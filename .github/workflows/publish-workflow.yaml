@@ -27,14 +27,17 @@ jobs:
 
       - name: Get git commit short sha
         if: ${{ github.event.inputs.snapshot == 'true' }}
-        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        run: |
+          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "RELEASE_DATE=$(date +'%Y-%m-%d-%H-%M')" >> $GITHUB_ENV
+          echo "SNAPSHOT_VERSION=${SHORT_SHA}${RELEASE_DATE}" >> $GITHUB_ENV
       - name: Set versions to snapshot
         if: ${{ github.event.inputs.snapshot == 'true' }}
         run: |
-          yq -ei '.metadata.version=env(SHORT_SHA), (.packages[]|select(has("ref"))|select(.name=="core")).ref=env(SHORT_SHA)' bundles/k3d-standard/uds-bundle.yaml
-          yq -ei '.metadata.version=env(SHORT_SHA), (.packages[]|select(has("ref"))|select(.name=="core-istio")).ref=env(SHORT_SHA)' bundles/k3d-istio/uds-bundle.yaml
-          yq -ei '.metadata.version=env(SHORT_SHA)' packages/istio/zarf.yaml
-          yq -ei '.metadata.version=env(SHORT_SHA)' packages/standard/zarf.yaml
+          yq -ei '.metadata.version=env(SNAPSHOT_VERSION), (.packages[]|select(has("ref"))|select(.name=="core")).ref=env(SNAPSHOT_VERSION)' bundles/k3d-standard/uds-bundle.yaml
+          yq -ei '.metadata.version=env(SNAPSHOT_VERSION), (.packages[]|select(has("ref"))|select(.name=="core-istio")).ref=env(SNAPSHOT_VERSION)' bundles/k3d-istio/uds-bundle.yaml
+          yq -ei '.metadata.version=env(SNAPSHOT_VERSION)' packages/istio/zarf.yaml
+          yq -ei '.metadata.version=env(SNAPSHOT_VERSION)' packages/standard/zarf.yaml
 
       - name: Create Packages and Bundles
         run: |
@@ -59,31 +62,14 @@ jobs:
 
       - name: Publish Standard Package Snapshot
         if: ${{ github.event.inputs.snapshot == 'true' }}
-        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SHORT_SHA}"
+        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
 
       - name: Publish Upstream Flavored Bundles Snapshot
         if: ${{ github.event.inputs.snapshot == 'true' && matrix.flavor != 'registry1' }}
-        run: uds run -f tasks/publish.yaml bundles --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SHORT_SHA}"
+        run: uds run -f tasks/publish.yaml bundles --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
 
       - name: Save logs
         if: always()
         uses: ./.github/actions/save-logs
         with:
           suffix: -${{ matrix.flavor }}
-
-  update-snapshot-latest-tag:
-    needs: publish-snapshot-release
-    if: ${{ github.event.inputs.snapshot == 'true' }}
-    env:
-      GH_TOKEN: ${{ github.token }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Update snapshot-latest tag
-        run: |
-          if gh release view snapshot-latest; then
-            gh release delete snapshot-latest --cleanup-tag -y
-          fi
-          gh release create snapshot-latest -t "snapshot-latest" -n "${SHORT_SHA}" --prerelease

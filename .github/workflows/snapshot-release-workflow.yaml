@@ -32,7 +32,12 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Update snapshot-latest tag
         run: |
+          # create copy of previous tag
+          git tag -f previous-snapshot-latest snapshot-latest
+          git push --force origin previous-snapshot-latest
+          # cleanup old release
           if gh release view snapshot-latest; then
             gh release delete snapshot-latest --cleanup-tag -y
           fi
-          gh release create snapshot-latest -t "snapshot-latest" -n "" --prerelease
+          # generate new release
+          gh release create snapshot-latest -t "snapshot-latest" --prerelease --notes-from-tag previous-snapshot-latest --generate-notes
