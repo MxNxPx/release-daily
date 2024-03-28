@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.1-uds.3](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.2...v0.0.1-uds.3) (2024-03-28)
+
+
+### Features
+
+* add snap notes ([164e600](https://github.com/MxNxPx/release-daily/commit/164e600ee3f724d2a4d3e5e5ede875040cd65f74))
+
+
+### Bug Fixes
+
+* change ci input to boolean and some cleaning ([090b5bb](https://github.com/MxNxPx/release-daily/commit/090b5bbf7763b6f9253b2b8dd946bc17f9d20de0))
+
 ## [0.0.1-uds.2](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.1...v0.0.1-uds.2) (2024-03-22)
 
 
