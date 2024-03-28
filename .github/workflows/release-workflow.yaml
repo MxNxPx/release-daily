@@ -29,5 +29,5 @@ jobs:
       packages: write
     uses: ./.github/workflows/publish-workflow.yaml
     with:
-      snapshot: "false"
+      snapshot: false
     secrets: inherit
