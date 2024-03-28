@@ -5,8 +5,9 @@ on:
     inputs:
       snapshot:
         description: 'true - for snapshot release'
-        required: true
         type: boolean
+        required: true
+        default: true
 
 jobs:
   publish-snapshot-release:
