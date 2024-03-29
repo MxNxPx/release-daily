@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.1-uds.4](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.3...v0.0.1-uds.4) (2024-03-29)
+
+
+### Features
+
+* default the snap ([0dfa7f8](https://github.com/MxNxPx/release-daily/commit/0dfa7f8dab96c2885b9d58acc6d42597c6eafd8e))
+* use env var for ci conditional ([db41f1a](https://github.com/MxNxPx/release-daily/commit/db41f1ac9f771b79e60bcdd284c26ce08b2932ea))
+
 ## [0.0.1-uds.3](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.2...v0.0.1-uds.3) (2024-03-28)
 
 
