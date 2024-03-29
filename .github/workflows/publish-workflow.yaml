@@ -18,6 +18,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      SNAPSHOT: ${{ inputs.snapshot }}
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Environment setup
@@ -55,20 +57,29 @@ jobs:
           fi
 
       - name: Publish Standard Package
-        if: ${{ !inputs.snapshot }}
-        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }}
+        run: |
+          if [ "${SNAPSHOT}" = "true" ]; then
+             uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
+          else
+             uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }}
+          fi
 
       - name: Publish Upstream Flavored Bundles
-        if: ${{ !inputs.snapshot && matrix.flavor != 'registry1' }}
-        run: uds run -f tasks/publish.yaml bundles
+        if: ${{ matrix.flavor != 'registry1' }}
+        run: |
+          if [ "${SNAPSHOT}" = "true" ]; then
+             uds run -f tasks/publish.yaml bundles --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
+          else
+             uds run -f tasks/publish.yaml bundles
+          fi
 
-      - name: Publish Standard Package Snapshot
-        if: ${{ inputs.snapshot }}
-        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
+#      - name: Publish Standard Package Snapshot
+#        if: ${{ inputs.snapshot }}
+#        run: uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
 
-      - name: Publish Upstream Flavored Bundles Snapshot
-        if: ${{ inputs.snapshot && matrix.flavor != 'registry1' }}
-        run: uds run -f tasks/publish.yaml bundles --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
+#      - name: Publish Upstream Flavored Bundles Snapshot
+#        if: ${{ inputs.snapshot && matrix.flavor != 'registry1' }}
+#        run: uds run -f tasks/publish.yaml bundles --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
 
       - name: Save logs
         if: always()
