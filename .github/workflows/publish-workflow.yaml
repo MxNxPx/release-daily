@@ -8,6 +8,14 @@ on:
         type: boolean
         required: true
         default: true
+      target-repo:
+        description: 'target repo for publishing artifacts'
+        type: string
+        required: true
+      version:
+        description: 'version for publishing artifacts'
+        type: string
+        required: false
 
 jobs:
   publish-snapshot-release:
@@ -29,19 +37,25 @@ jobs:
       - name: Login to registry1
         run: uds run registry-login --set REGISTRY=registry1.dso.mil --set REGISTRY_USERNAME=${{ secrets.IRON_BANK_ROBOT_USERNAME }} --set REGISTRY_PASSWORD=${{ secrets.IRON_BANK_ROBOT_PASSWORD }} --set REGISTRY_RETRY_INTERVAL=90
 
-      - name: Get snapshot version using git commit short sha and date
+      - name: Set version from input
+        if: ${{ !inputs.snapshot }}
+        run: |
+          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+
+      - name: (Snapshot) Get snapshot version using git commit short sha and date
         if: ${{ inputs.snapshot }}
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
           RELEASE_DATE=$(date +'%Y-%m-%d')
-          echo "SNAPSHOT_VERSION=${RELEASE_DATE}-${SHORT_SHA}" >> $GITHUB_ENV
-      - name: Set versions to snapshot
+          echo "VERSION=${RELEASE_DATE}-${SHORT_SHA}" >> $GITHUB_ENV
+
+      - name: (Snapshot) Set versions to snapshot
         if: ${{ inputs.snapshot }}
         run: |
-          yq -ei '.metadata.version=env(SNAPSHOT_VERSION), (.packages[]|select(has("ref"))|select(.name=="core")).ref=env(SNAPSHOT_VERSION)' bundles/k3d-standard/uds-bundle.yaml
-          yq -ei '.metadata.version=env(SNAPSHOT_VERSION), (.packages[]|select(has("ref"))|select(.name=="core-istio")).ref=env(SNAPSHOT_VERSION)' bundles/k3d-istio/uds-bundle.yaml
-          yq -ei '.metadata.version=env(SNAPSHOT_VERSION)' packages/istio/zarf.yaml
-          yq -ei '.metadata.version=env(SNAPSHOT_VERSION)' packages/standard/zarf.yaml
+          yq -ei '.metadata.version=env(VERSION), (.packages[]|select(has("ref"))|select(.name=="core")).ref=env(VERSION)' bundles/k3d-standard/uds-bundle.yaml
+          yq -ei '.metadata.version=env(VERSION), (.packages[]|select(has("ref"))|select(.name=="core-istio")).ref=env(VERSION)' bundles/k3d-istio/uds-bundle.yaml
+          yq -ei '.metadata.version=env(VERSION)' packages/istio/zarf.yaml
+          yq -ei '.metadata.version=env(VERSION)' packages/standard/zarf.yaml
 
       - name: Create Packages and Bundles
         run: |
@@ -58,20 +72,12 @@ jobs:
 
       - name: Publish Standard Package
         run: |
-          if [ "${SNAPSHOT}" = "true" ]; then
-             uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
-          else
-             uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }}
-          fi
+           uds run -f tasks/publish.yaml standard-package --set FLAVOR=${{ matrix.flavor }} --set TARGET_REPO=${{ inputs.target-repo }} --set VERSION="${VERSION}"
 
       - name: Publish Upstream Flavored Bundles
         if: ${{ matrix.flavor != 'registry1' }}
         run: |
-          if [ "${SNAPSHOT}" = "true" ]; then
-             uds run -f tasks/publish.yaml bundles --set TARGET_REPO="ghcr.io/mxnxpx/packages/uds/snapshots" --set VERSION="${SNAPSHOT_VERSION}"
-          else
-             uds run -f tasks/publish.yaml bundles
-          fi
+           uds run -f tasks/publish.yaml bundles --set TARGET_REPO=${{ inputs.target-repo }} --set VERSION="${VERSION}"
 
 #      - name: Publish Standard Package Snapshot
 #        if: ${{ inputs.snapshot }}

@@ -30,4 +30,6 @@ jobs:
     uses: ./.github/workflows/publish-workflow.yaml
     with:
       snapshot: false
+      version: ${{ needs.tag-new-version.outputs.release_tag }}
+      target-repo: "ghcr.io/mxnxpx/packages/uds"
     secrets: inherit
