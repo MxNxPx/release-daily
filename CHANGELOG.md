@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.1-uds.6](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.5...v0.0.1-uds.6) (2024-03-29)
+
+
+### Bug Fixes
+
+* jay saun ([f5bcff1](https://github.com/MxNxPx/release-daily/commit/f5bcff14f547f120a562a8ce479723589c102048))
+* release please config fix ([74b3646](https://github.com/MxNxPx/release-daily/commit/74b3646fced14a5a5663571ab541fb043e17f819))
+
 ## [0.0.1-uds.5](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.4...v0.0.1-uds.5) (2024-03-29)
 
 
