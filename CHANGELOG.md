@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.1-uds.5](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.4...v0.0.1-uds.5) (2024-03-29)
+
+
+### Features
+
+* make ci more dry ([495dabd](https://github.com/MxNxPx/release-daily/commit/495dabd524d1e7387c63d30da0d5ff5457484ec6))
+
 ## [0.0.1-uds.4](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.3...v0.0.1-uds.4) (2024-03-29)
 
 
