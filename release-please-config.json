@@ -14,7 +14,17 @@
       "prerelease": false,
       "versioning": "prerelease",
       "prerelease-type": "uds",
-      "version-file": "version.txt"
+      "version-file": "version.txt",
+      "extra-files": [
+        "README.md",
+        "packages/istio/zarf.yaml",
+        "packages/standard/zarf.yaml",
+        "bundles/k3d-istio/uds-bundle.yaml",
+        "bundles/k3d-standard/uds-bundle.yaml",
+        "tasks/deploy.yaml",
+        "tasks/publish.yaml"
+      ]
+    }
     }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
