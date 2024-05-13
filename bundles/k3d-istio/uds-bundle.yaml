@@ -3,7 +3,7 @@ metadata:
   name: k3d-core-istio-dev
   description: A UDS bundle for deploying Istio from UDS Core on a development cluster
   # x-release-please-start-version
-  version: "0.0.1-uds.6"
+  version: "0.0.1-uds.7"
   # x-release-please-end
 packages:
   - name: uds-k3d-dev
@@ -33,6 +33,6 @@ packages:
   - name: core-istio
     path: ../../build/
     # x-release-please-start-version
-    ref: 0.0.1-uds.6
+    ref: 0.0.1-uds.7
     # x-release-please-end
  
