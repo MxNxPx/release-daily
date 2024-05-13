@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.1-uds.7](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.6...v0.0.1-uds.7) (2024-05-13)
+
+
+### Features
+
+* update README.md ([6ba9cea](https://github.com/MxNxPx/release-daily/commit/6ba9cea5e430f3ee918516eee772b470131173e4))
+
 ## [0.0.1-uds.6](https://github.com/MxNxPx/release-daily/compare/v0.0.1-uds.5...v0.0.1-uds.6) (2024-03-29)
 
 
